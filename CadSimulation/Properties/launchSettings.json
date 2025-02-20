@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CadSimulation": {
+      "commandName": "Project",
+      "commandLineArgs": "--path \"C:\\tmp\\CadSimulation.dat\""
+    }
+  }
+}
