@@ -2,7 +2,7 @@
   "profiles": {
     "CadSimulation": {
       "commandName": "Project",
-      "commandLineArgs": "--path \"C:\\tmp\\CadSimulation.dat\""
+      "commandLineArgs": "--path \"C:\\tmp\\CadSimulation.dat\" --json"
     }
   }
 }

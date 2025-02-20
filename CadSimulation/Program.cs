@@ -1,18 +1,24 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using CadSimulation;
 using CommandLine;
+using System;
+using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 
 List<Shape> shapes = new List<Shape>();
 string targetFilename = string.Empty;
-
+bool exportAsJSon = false;
 Parser.Default.ParseArguments<CommandLineOptions>(args)
            .WithParsed(o =>
            {
-               targetFilename = o.Path;
+               targetFilename = o.Path; 
+               exportAsJSon= o.Json;
            });
 
+Console.WriteLine("Filename selected: {0}", targetFilename);
+Console.WriteLine("Export as JSON: {0}", exportAsJSon);
 while (true)
 {
     Console.WriteLine(
@@ -80,7 +86,10 @@ while (true)
                 continue;
             }
             Console.WriteLine($"Storing data to {targetFilename}:\t");
-            executeStoreData();
+            if(exportAsJSon)
+                executeStoreDataAsJson();
+            else
+                executeStoreData();
             break;
         case 'w':
             if (!System.IO.File.Exists(targetFilename))
@@ -89,7 +98,10 @@ while (true)
                 continue;
             }
             Console.WriteLine($"Retrieving data from {targetFilename}:\t");
-            executoRetrieveData();
+            if(exportAsJSon)
+                executoRetrieveDataAsJson();
+            else
+                executoRetrieveData();
             break;
         case 'a':
             {
@@ -101,8 +113,34 @@ while (true)
             }
             continue;
     }
-    shapes.Add(shape!);
+    if(shape != null)
+        shapes.Add(shape);
 
+}
+
+void executoRetrieveDataAsJson()
+{
+    var json = System.IO.File.ReadAllText(targetFilename);
+    var shapesList = JsonSerializer.Deserialize<List<Shape>>(json, 
+        new JsonSerializerOptions
+            {
+                Converters = { new ShapeDataConverter() }
+            }
+        );
+    shapes.Clear();
+    shapes.AddRange(shapesList);
+}
+
+void executeStoreDataAsJson()
+{
+    var json = JsonSerializer.Serialize(shapes,
+        new JsonSerializerOptions
+        {
+            WriteIndented = true ,
+            Converters = { new ShapeDataConverter() }
+        }
+     );
+    System.IO.File.WriteAllText(targetFilename, json);
 }
 
 void executoRetrieveData()
@@ -255,7 +293,69 @@ class CommandLineOptions
 {
     [Option("path", Required = true, HelpText = "Write path to file")]
     public string Path { get; set; }
+    [Option("json", Required = false, Default =false, HelpText = "Export in JSON format")]
+    public bool Json { get; set; }
 
 
 }
 
+
+class ShapeDataConverter : System.Text.Json.Serialization.JsonConverter<Shape>
+{
+    public override Shape Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        using (var jsonDoc = JsonDocument.ParseValue(ref reader))
+        {
+            var jsonObject = jsonDoc.RootElement;
+            var type = jsonObject.GetProperty("Type").GetString();
+            switch(type)
+            {
+                case nameof(Circle):
+                    return new Circle(Convert.ToInt32(jsonObject.GetProperty(nameof(Circle.Radius)).GetString()));
+                case nameof(Square):
+                    {
+                      return   new Square(Convert.ToInt32(jsonObject.GetProperty(nameof(Square.Side)).GetString()));
+                }
+                case nameof(Rectangle):
+                    return new Rectangle(
+                            Convert.ToInt32(jsonObject.GetProperty(nameof(Rectangle.Width)).GetString()),
+                            Convert.ToInt32(jsonObject.GetProperty(nameof(Rectangle.Height)).GetString())
+                        );
+                case nameof(Triangle):
+                    return new Triangle(
+                            Convert.ToInt32(jsonObject.GetProperty(nameof(Triangle.Base)).GetString()),
+                            Convert.ToInt32(jsonObject.GetProperty(nameof(Triangle.Height)).GetString())
+                        );
+                default:
+                    throw  new Exception("Unable to parse file");
+            };
+        }
+    }
+
+    public override void Write(Utf8JsonWriter writer, Shape value, JsonSerializerOptions options)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("Type", value.GetType().Name);
+        switch (value)
+        {
+            case Circle circle:
+                writer.WriteNumber(nameof(Circle.Radius), circle.Radius);
+                break;
+            case Square square:
+                writer.WriteNumber(nameof(Square.Side), square.Side);
+                break;
+            case Rectangle rectangle:
+                writer.WriteNumber(nameof(Rectangle.Height), rectangle.Height);
+                writer.WriteNumber(nameof(Rectangle.Width), rectangle.Width);
+                break;
+            case Triangle triangle:
+                writer.WriteNumber(nameof(Triangle.Base), triangle.Base);
+                writer.WriteNumber(nameof(Triangle.Height), triangle.Height);
+                break;
+            default:
+                throw new InvalidOperationException("Unknown shape type");
+        }
+
+        writer.WriteEndObject();
+    }
+}
