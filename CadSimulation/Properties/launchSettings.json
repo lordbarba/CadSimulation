@@ -2,7 +2,7 @@
   "profiles": {
     "CadSimulation": {
       "commandName": "Project",
-      "commandLineArgs": "--path \"C:\\tmp\\CadSimulation.dat\" --json"
+      "commandLineArgs": "--uri http://127.0.0.1:8282/shapes"
     }
   }
 }

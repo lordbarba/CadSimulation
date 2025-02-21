@@ -6,19 +6,25 @@ using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 List<Shape> shapes = new List<Shape>();
-string targetFilename = string.Empty;
-bool exportAsJSon = false;
+string sTargetFilename = string.Empty;
+bool bUseJsonFormat = false;
+string sRemoteUri = string.Empty;
+HttpClient client = new HttpClient();
+string sData;
+
 Parser.Default.ParseArguments<CommandLineOptions>(args)
            .WithParsed(o =>
            {
-               targetFilename = o.Path; 
-               exportAsJSon= o.Json;
+               sTargetFilename = o.Path; 
+               bUseJsonFormat= o.Json;
+               sRemoteUri = o.Uri;
            });
 
-Console.WriteLine("Filename selected: {0}", targetFilename);
-Console.WriteLine("Export as JSON: {0}", exportAsJSon);
+Console.WriteLine("Filename selected: {0}", sTargetFilename);
+Console.WriteLine("Export as JSON: {0}", bUseJsonFormat);
 while (true)
 {
     Console.WriteLine(
@@ -80,28 +86,63 @@ while (true)
             shape = new Circle(radius); // Console.WriteLine("Circle");
             break;
         case 'k':
-            if (string.IsNullOrEmpty(targetFilename))
-            {
-                Console.WriteLine("Path is not set");
-                continue;
-            }
-            Console.WriteLine($"Storing data to {targetFilename}:\t");
-            if(exportAsJSon)
-                executeStoreDataAsJson();
+            if(bUseJsonFormat)
+                sData = getStoreDataAsJson();
             else
-                executeStoreData();
+                sData = executeStoreData();
+
+            if (!string.IsNullOrEmpty(sTargetFilename))
+            {
+                Console.WriteLine($"Storing data to {sTargetFilename}");
+                System.IO.File.WriteAllText(sTargetFilename, sData);
+            }
+            else if (!string.IsNullOrEmpty(sRemoteUri))
+            {
+                Console.WriteLine($"Storing data to remote {sRemoteUri}");
+                try
+                {
+                    StringContent content = new StringContent(sData, Encoding.UTF8);
+                    HttpResponseMessage response = client.PostAsync(sRemoteUri, content).Result; // Bloccante
+                    response.EnsureSuccessStatusCode();
+                    string sReply = response.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine("POST Response: " + sReply);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("POST Error: " + e.Message);
+                    break;
+                }
+            }
             break;
         case 'w':
-            if (!System.IO.File.Exists(targetFilename))
+
+            string stringContent = string.Empty;
+            if (!string.IsNullOrEmpty(sTargetFilename))
             {
-                Console.WriteLine("File does not esist ");
-                continue;
+                Console.WriteLine($"Retrieving  data from {sTargetFilename}");
+                stringContent = System.IO.File.ReadAllText(sTargetFilename);
             }
-            Console.WriteLine($"Retrieving data from {targetFilename}:\t");
-            if(exportAsJSon)
-                executoRetrieveDataAsJson();
+            else if (!string.IsNullOrEmpty(sRemoteUri))
+            {
+                Console.WriteLine($"Retrieving  data from remote {sRemoteUri}");
+
+                try
+                {
+                    HttpResponseMessage response = client.GetAsync(sRemoteUri).Result; // Bloccante
+                    response.EnsureSuccessStatusCode();
+                    stringContent = response.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine("GET Response: " + stringContent);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("GET Error: " + e.Message);
+                }
+
+            }
+            if (bUseJsonFormat)
+                executoRetrieveDataFromJson(stringContent);
             else
-                executoRetrieveData();
+                executoRetrieveData(stringContent);
             break;
         case 'a':
             {
@@ -118,10 +159,10 @@ while (true)
 
 }
 
-void executoRetrieveDataAsJson()
+#region JSON FORMAT
+void executoRetrieveDataFromJson(string sJson)
 {
-    var json = System.IO.File.ReadAllText(targetFilename);
-    var shapesList = JsonSerializer.Deserialize<List<Shape>>(json, 
+    var shapesList = JsonSerializer.Deserialize<List<Shape>>(sJson, 
         new JsonSerializerOptions
             {
                 Converters = { new ShapeDataConverter() }
@@ -131,7 +172,7 @@ void executoRetrieveDataAsJson()
     shapes.AddRange(shapesList);
 }
 
-void executeStoreDataAsJson()
+string getStoreDataAsJson()
 {
     var json = JsonSerializer.Serialize(shapes,
         new JsonSerializerOptions
@@ -140,12 +181,14 @@ void executeStoreDataAsJson()
             Converters = { new ShapeDataConverter() }
         }
      );
-    System.IO.File.WriteAllText(targetFilename, json);
+    return json;
 }
+#endregion
 
-void executoRetrieveData()
+#region CUSTOM FORMAT
+void executoRetrieveData(string sContent)
 {
-    string[] sLines=System.IO.File.ReadAllLines(targetFilename);
+    string[] sLines=sContent.Split(Environment.NewLine);
     shapes.Clear();
     foreach (var item in sLines)
     {
@@ -171,7 +214,7 @@ void executoRetrieveData()
     }
 }
 
-void executeStoreData()
+string executeStoreData()
 {
     StringBuilder sb = new StringBuilder();
     foreach (var s in shapes)
@@ -196,9 +239,9 @@ void executeStoreData()
         sb.AppendLine();
     }
 
-    System.IO.File.WriteAllText(targetFilename, sb.ToString());
+    return sb.ToString();
 }
-
+#endregion
 
 namespace CadSimulation
 {
@@ -291,11 +334,13 @@ namespace CadSimulation
 
 class CommandLineOptions
 {
-    [Option("path", Required = true, HelpText = "Write path to file")]
+    [Option("path", Required = false, HelpText = "Write path to file")]
     public string Path { get; set; }
     [Option("json", Required = false, Default =false, HelpText = "Export in JSON format")]
     public bool Json { get; set; }
 
+    [Option("uri", Required = false, HelpText = "Remote repository url")]
+    public string Uri { get; set; }
 
 }
 
@@ -311,20 +356,20 @@ class ShapeDataConverter : System.Text.Json.Serialization.JsonConverter<Shape>
             switch(type)
             {
                 case nameof(Circle):
-                    return new Circle(Convert.ToInt32(jsonObject.GetProperty(nameof(Circle.Radius)).GetString()));
+                    return new Circle(jsonObject.GetProperty(nameof(Circle.Radius)).GetInt32());
                 case nameof(Square):
                     {
-                      return   new Square(Convert.ToInt32(jsonObject.GetProperty(nameof(Square.Side)).GetString()));
+                      return   new Square(jsonObject.GetProperty(nameof(Square.Side)).GetInt32());
                 }
                 case nameof(Rectangle):
                     return new Rectangle(
-                            Convert.ToInt32(jsonObject.GetProperty(nameof(Rectangle.Width)).GetString()),
-                            Convert.ToInt32(jsonObject.GetProperty(nameof(Rectangle.Height)).GetString())
+                            jsonObject.GetProperty(nameof(Rectangle.Width)).GetInt32(),
+                            jsonObject.GetProperty(nameof(Rectangle.Height)).GetInt32()
                         );
                 case nameof(Triangle):
                     return new Triangle(
-                            Convert.ToInt32(jsonObject.GetProperty(nameof(Triangle.Base)).GetString()),
-                            Convert.ToInt32(jsonObject.GetProperty(nameof(Triangle.Height)).GetString())
+                            jsonObject.GetProperty(nameof(Triangle.Base)).GetInt32(),
+                            jsonObject.GetProperty(nameof(Triangle.Height)).GetInt32()
                         );
                 default:
                     throw  new Exception("Unable to parse file");
