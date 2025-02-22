@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadSimulation.localStore", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stores", "stores", "{5B584DBE-1A2F-41D2-BB8B-000304D4518B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadSimulation.businass", "..\CadSimulation.businass\CadSimulation.businass.csproj", "{F0D280E2-C0B6-4EDC-8D0C-AB1B0D81E685}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadSimulation.business", "..\CadSimulation.businass\CadSimulation.business.csproj", "{F0D280E2-C0B6-4EDC-8D0C-AB1B0D81E685}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dataFormat", "dataFormat", "{2CFA257F-978A-4900-B037-3FAEA5E0DF47}"
 EndProject
@@ -32,6 +32,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadSimulation.customDataFormat", "..\CadSimulation.customDataFormat\CadSimulation.customDataFormat.csproj", "{9441678D-A996-4B54-A416-A197D32B99C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadSimulation.unitTest", "..\CadSimulation.unitTest\CadSimulation.unitTest.csproj", "{587B163A-2747-4F29-80B6-A7B309CC2D63}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ui", "ui", "{56982B34-B87D-4E07-A334-B8A861BE2ADA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadSimulation.consoleUI", "..\CadSimulation.ConsoleUI\CadSimulation.consoleUI.csproj", "{4A23ABF4-17AF-45DF-8A89-C2A21457397F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +91,10 @@ Global
 		{587B163A-2747-4F29-80B6-A7B309CC2D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{587B163A-2747-4F29-80B6-A7B309CC2D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{587B163A-2747-4F29-80B6-A7B309CC2D63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A23ABF4-17AF-45DF-8A89-C2A21457397F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A23ABF4-17AF-45DF-8A89-C2A21457397F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A23ABF4-17AF-45DF-8A89-C2A21457397F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A23ABF4-17AF-45DF-8A89-C2A21457397F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,5 +108,6 @@ Global
 		{2EC2BD4D-013B-4D45-80D7-7735F339FBA4} = {5B584DBE-1A2F-41D2-BB8B-000304D4518B}
 		{1F451BE1-3F11-4CBC-AEBF-4FDA6128496A} = {2CFA257F-978A-4900-B037-3FAEA5E0DF47}
 		{9441678D-A996-4B54-A416-A197D32B99C6} = {2CFA257F-978A-4900-B037-3FAEA5E0DF47}
+		{4A23ABF4-17AF-45DF-8A89-C2A21457397F} = {56982B34-B87D-4E07-A334-B8A861BE2ADA}
 	EndGlobalSection
 EndGlobal

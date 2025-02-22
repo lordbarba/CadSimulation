@@ -11,6 +11,17 @@ namespace CadSimulation.Interfaces
     {
         private static Dictionary<string, Type> shapeTypes=null;
 
+        public static Type GetShapeTypeFromCode(char keyChar)
+        {
+            Type retType = Helper.GetShapeTypes().Values.FirstOrDefault(x =>
+            {
+                char code = (char)x.GetProperty(nameof(IShape.Code),
+                    BindingFlags.Static | BindingFlags.Public).GetValue(null);
+                return Char.ToUpper(code) == char.ToUpper(keyChar);
+            });
+            return retType;
+        }
+
         public static Dictionary<string, Type> GetShapeTypes()
         {
             if(shapeTypes != null)

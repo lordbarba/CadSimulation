@@ -12,12 +12,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CadSimulation.businass\CadSimulation.businass.csproj" />
+    <ProjectReference Include="..\CadSimulation.businass\CadSimulation.business.csproj" />
+    <ProjectReference Include="..\CadSimulation.circle\CadSimulation.circle.csproj" />
+    <ProjectReference Include="..\CadSimulation.ConsoleUI\CadSimulation.consoleUI.csproj" />
     <ProjectReference Include="..\CadSimulation.customDataFormat\CadSimulation.customDataFormat.csproj" />
     <ProjectReference Include="..\CadSimulation.Interfaces\CadSimulation.Interfaces.csproj" />
     <ProjectReference Include="..\CadSimulation.JsonDataFormat\CadSimulation.jsonDataFormat.csproj" />
     <ProjectReference Include="..\CadSimulation.localStore\CadSimulation.localStore.csproj" />
+    <ProjectReference Include="..\CadSimulation.rectangle\CadSimulation.rectangle.csproj" />
     <ProjectReference Include="..\CadSimulation.remoteStore\CadSimulation.remoteStore.csproj" />
+    <ProjectReference Include="..\CadSimulation.Square\CadSimulation.square.csproj" />
+    <ProjectReference Include="..\CardSimulation.triangle\CardSimulation.triangle.csproj" />
   </ItemGroup>
 
 </Project>
