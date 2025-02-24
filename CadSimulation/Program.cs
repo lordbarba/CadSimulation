@@ -12,7 +12,7 @@ while (true)
 "   'c': insert a circle\n" +
 "   'r': insert a rectangle\n" +
 "   'l': list all inserted shapes\n" +
-"   'a': all shapres total area\n" +
+"   'a': all shapes total area\n" +
 "   'q': quit");
 
     var k = Console.ReadKey(true);
@@ -40,20 +40,20 @@ while (true)
             break;
         case 'r':
             {
-                Console.WriteLine("Rectangle.\nValue for hight:\t");
-                var hight = Int32.Parse(Console.ReadLine()!);
-                Console.WriteLine("value for weidth:\t");
-                var weidth = Int32.Parse(Console.ReadLine()!);
-                shape = new Rectangle(hight, weidth); // Console.WriteLine("Rectangle");
+                Console.WriteLine("Rectangle.\nValue for height:\t");
+                var height = Int32.Parse(Console.ReadLine()!);
+                Console.WriteLine("value for width:\t");
+                var width = Int32.Parse(Console.ReadLine()!);
+                shape = new Rectangle(height, width); // Console.WriteLine("Rectangle");
             }
             break;
         case 't':
             {
-                Console.WriteLine("Triangle.\nValue for hight:\t");
-                var hight = Int32.Parse(Console.ReadLine()!);
+                Console.WriteLine("Triangle.\nValue for height:\t");
+                var height = Int32.Parse(Console.ReadLine()!);
                 Console.WriteLine("value for base:\t");
-                var weidth = Int32.Parse(Console.ReadLine()!);
-                shape = new Triangle(hight, weidth); // Console.WriteLine("Triangle");
+                var width = Int32.Parse(Console.ReadLine()!);
+                shape = new Triangle(height, width); // Console.WriteLine("Triangle");
             }
             break;
         case 'c':
@@ -102,20 +102,20 @@ namespace CadSimulation
     internal class Rectangle : Shape
     {
         readonly int _height;
-        readonly int _weidth;
-        public Rectangle(int height, int weidth)
+        readonly int _width;
+        public Rectangle(int height, int width)
         {
             _height = height;
-            _weidth = weidth;
+            _width = width;
         }
         double Shape.area()
         {
-            return _height * _weidth;
+            return _height * _width;
         }
 
         void Shape.descr()
         {
-            Console.WriteLine($"Rectangle, height: {_height}, weidth: {_weidth}");
+            Console.WriteLine($"Rectangle, height: {_height}, width: {_width}");
         }
     }
     internal class Circle : Shape
