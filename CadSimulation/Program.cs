@@ -22,7 +22,7 @@ while (true)
 "   'c': insert a circle\n" +
 "   'r': insert a rectangle\n" +
 "   'l': list all inserted shapes\n" +
-"   'a': all shapres total area\n" +
+"   'a': all shapes total area\n" +
 "   'k': store data\n" +
 "   'w': get stored data\n" +
 "   'q': quit");
@@ -52,20 +52,20 @@ while (true)
             break;
         case 'r':
             {
-                Console.WriteLine("Rectangle.\nValue for hight:\t");
-                var hight = Int32.Parse(Console.ReadLine()!);
-                Console.WriteLine("value for weidth:\t");
-                var weidth = Int32.Parse(Console.ReadLine()!);
-                shape = new Rectangle(hight, weidth); // Console.WriteLine("Rectangle");
+                Console.WriteLine("Rectangle.\nValue for height:\t");
+                var height = Int32.Parse(Console.ReadLine()!);
+                Console.WriteLine("value for width:\t");
+                var width = Int32.Parse(Console.ReadLine()!);
+                shape = new Rectangle(height, width); // Console.WriteLine("Rectangle");
             }
             break;
         case 't':
             {
-                Console.WriteLine("Triangle.\nValue for hight:\t");
-                var hight = Int32.Parse(Console.ReadLine()!);
+                Console.WriteLine("Triangle.\nValue for height:\t");
+                var height = Int32.Parse(Console.ReadLine()!);
                 Console.WriteLine("value for base:\t");
-                var weidth = Int32.Parse(Console.ReadLine()!);
-                shape = new Triangle(hight, weidth); // Console.WriteLine("Triangle");
+                var width = Int32.Parse(Console.ReadLine()!);
+                shape = new Triangle(height, width); // Console.WriteLine("Triangle");
             }
             break;
         case 'c':
@@ -101,7 +101,8 @@ while (true)
             }
             continue;
     }
-    shapes.Add(shape!);
+    if(shape!= null)    
+        shapes.Add(shape);
 
 }
 
@@ -194,10 +195,10 @@ namespace CadSimulation
 
         public int Height { get => _height; }
         public int Width { get => _width; }
-        public Rectangle(int height, int weidth)
+        public Rectangle(int height, int width)
         {
             _height = height;
-            _width = weidth;
+            _width = width;
         }
         double Shape.area()
         {
@@ -206,7 +207,7 @@ namespace CadSimulation
 
         void Shape.descr()
         {
-            Console.WriteLine($"Rectangle, height: {_height}, weidth: {_width}");
+            Console.WriteLine($"Rectangle, height: {_height}, width: {_width}");
         }
     }
     internal class Circle : Shape
@@ -254,7 +255,7 @@ namespace CadSimulation
 class CommandLineOptions
 {
     [Option("path", Required = true, HelpText = "Write path to file")]
-    public string Path { get; set; }
+    public string Path { get; set; } = string.Empty;
 
 
 }
