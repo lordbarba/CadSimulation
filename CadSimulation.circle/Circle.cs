@@ -20,9 +20,9 @@ namespace CadSimulation.circle
             return _radius * _radius * 3.1416;
         }
 
-        void IShape.descr()
+        string IShape.descr()
         {
-            Console.WriteLine($"Circle, radius: {_radius}");
+            return ($"Circle, radius: {_radius}");
         }
     }
 }

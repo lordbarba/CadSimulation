@@ -26,6 +26,7 @@ Console.WriteLine("Export as JSON: {0}", bUseJsonFormat);
 IRepositoryStore store;
 IRepositoryDataFormat dataFormat;
 IConfigurationForStore configurationForStore;
+
 // store selection. Could be a Factory
 if (!string.IsNullOrEmpty(sTargetFilename))
 {
@@ -52,12 +53,11 @@ else
 // initialize store
 store.Initialize(configurationForStore, dataFormat);
 
-StringBuilder sb = new StringBuilder();
 
 // initialize manager
 Manager manager = new Manager(store);
-
 IUserInterface userInterface = new ConsoleUI(manager);
+
 
 userInterface.Run();
 

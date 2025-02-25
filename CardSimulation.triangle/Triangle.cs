@@ -21,9 +21,9 @@ namespace CardSimulation.triangle
         {
             return _base * _height / 2;
         }
-        void IShape.descr()
+        string IShape.descr()
         {
-            Console.WriteLine($"Triangle, base: {_base}, height: {_height}");
+            return ($"Triangle, base: {_base}, height: {_height}");
         }
     }
 }

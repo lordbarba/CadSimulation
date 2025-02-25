@@ -7,44 +7,45 @@ namespace CadSimulation.remoteStore
     public class RemoteStore : IRepositoryStore
     {
         private RemoteStoreConfiguration? configuration;
+        private IRepositoryDataFormat dataFormat;
         private HttpClient client = new HttpClient();
         public List<IShape> GetAllShapes()
         {
-            throw new NotImplementedException();
             try
             {
                 HttpResponseMessage response = client.GetAsync(configuration.URI).Result; // Bloccante
                 response.EnsureSuccessStatusCode();
                 string stringContent = response.Content.ReadAsStringAsync().Result;
-                Console.WriteLine("GET Response: " + stringContent);
+
+                return dataFormat.GetListFromString(stringContent);
             }
             catch (Exception e)
             {
-                Console.WriteLine("GET Error: " + e.Message);
+                throw new Exception("GET Error: " + e.Message);
             }
         }
 
         public void Initialize(IConfigurationForStore configuration, IRepositoryDataFormat dataFormat)
         {
             this.configuration = configuration as RemoteStoreConfiguration;
+            this.dataFormat= dataFormat;
         }
 
         public bool SaveAllShapes(List<IShape> shapes)
         {
-            throw new NotImplementedException();
-            string sData = String.Empty;
+            string sData = dataFormat.GetStringFromList(shapes);
             try
             {
                 StringContent content = new StringContent(sData, Encoding.UTF8);
                 HttpResponseMessage response = client.PostAsync(configuration.URI, content).Result; // Bloccante
                 response.EnsureSuccessStatusCode();
                 string sReply = response.Content.ReadAsStringAsync().Result;
-                Console.WriteLine("POST Response: " + sReply);
             }
             catch (Exception e)
             {
-                Console.WriteLine("POST Error: " + e.Message);
+                throw new Exception("POST Error: " + e.Message);
             }
+            return true;
         }
     }
 }

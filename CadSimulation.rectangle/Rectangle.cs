@@ -22,9 +22,9 @@ namespace CadSimulation.rectangle
             return _height * _width;
         }
 
-        void IShape.descr()
+        string IShape.descr()
         {
-            Console.WriteLine($"Rectangle, height: {_height}, weidth: {_width}");
+            return ($"Rectangle, height: {_height}, weidth: {_width}");
         }
     }
 }

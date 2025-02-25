@@ -18,9 +18,9 @@ namespace CadSimulation.square
             return _side * _side;
         }
 
-        void IShape.descr()
+        string IShape.descr()
         {
-            Console.WriteLine($"Square, side: {_side}");
+            return ($"Square, side: {_side}");
         }
     }
 }

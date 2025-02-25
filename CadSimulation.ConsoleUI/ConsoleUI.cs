@@ -50,7 +50,7 @@ namespace CadSimulation.consoleUI
                         {
                             foreach (var item in this.manager.ShapeList)
                             {
-                                item.descr();
+                                Console.WriteLine(item.descr());
                             }
                         }
                         continue;

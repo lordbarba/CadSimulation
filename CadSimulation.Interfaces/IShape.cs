@@ -4,7 +4,7 @@
     {
         static string Name { get; }
         static char Code { get => throw new NotImplementedException(); }
-        void descr();
+        string descr();
         double area();
     }
 }
